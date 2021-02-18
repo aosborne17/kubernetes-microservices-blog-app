@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moderation-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moderation
+  template:
+    metadata:
+      labels:
+        app: moderation
+    spec:
+      containers:
+        - name: moderation
+          image: aosborne17/moderation:latest
+---
+# adding the three dashes allows us to create multiple objects in one yaml file
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-srv
+spec:
+  # tellling our cluster ip service to direct incoming traffic to the moderation pod
+  selector:
+    app: moderation
+  type: ClusterIP
+  ports:
+    - name: moderation
+      protocol: TCP
+      targetPort: 4003
+      port: 4003

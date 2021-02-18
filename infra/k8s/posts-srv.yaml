@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-srv
+spec:
+  type: NodePort
+  # here we are telling the node port what pods it should expose
+  # so it will select all the pods that have a label of posts
+  # these labels were created in our deployment config file
+  selector:
+    app: posts
+
+  ports:
+    # our posts listens on port 4000, so we'll be sure to expose that
+    # all the ports we want to expose on the targetted port
+    - name: posts
+      protocol: TCP
+      # our node port service also has a port of it's own, so we must expose that too
+      port: 4000
+      # the actual port our app is listening on
+      targetPort: 4000

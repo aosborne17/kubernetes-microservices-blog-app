@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # this is what allows us to use the wildcard below
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+    - host: posts.com
+      http:
+        paths:
+          - path: /posts/create
+            backend:
+              serviceName: posts-clusterip-srv
+              servicePort: 4000
+          - path: /posts
+            backend:
+              serviceName: query-srv
+              servicePort: 4002
+          # this is the k8 ingress equivalent of us doing /posts/:id/comments, just a different wildcard
+          - path: /posts/?(.*)/comments
+            backend:
+              serviceName: comments-srv
+              servicePort: 4001
+          # this wildcard allows our app to work when we use react router in our frontend
+          - path: /?(.*)
+            backend:
+              serviceName: client-srv
+              servicePort: 3000
